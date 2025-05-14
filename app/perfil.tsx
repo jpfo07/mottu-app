@@ -1,15 +1,17 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useRouter } from 'expo-router';
 import { useEffect, useState } from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
 type Usuario = {
-    apelido: string;
+    nome: string;
     email: string;
     cpf: string;
 };
 
 export default function Perfil() {
     const [usuario, setUsuario] = useState<Usuario | null>(null);
+    const router = useRouter();
 
     useEffect(() => {
         const carregarDados = async () => {
@@ -22,7 +24,7 @@ export default function Perfil() {
     }, []);
 
     if (!usuario) {
-        return (
+         return (
             <View style={styles.container}>
                 <Text style={styles.loading}>Carregando dados...</Text>
             </View>
@@ -31,11 +33,17 @@ export default function Perfil() {
 
     return (
         <View style={styles.container}>
-            <Text style={styles.title}>Perfil</Text>
+            {/* Cabeçalho com seta de voltar */}
+            <View style={styles.header}>
+                <TouchableOpacity onPress={() => router.back()}>
+                    <Text style={styles.arrow}>←</Text>
+                </TouchableOpacity>
+                <Text style={styles.title}>Perfil</Text>
+            </View>
 
             <View style={styles.infoBox}>
                 <Text style={styles.label}>Nome</Text>
-                <Text style={styles.value}>{usuario.apelido}</Text>
+                <Text style={styles.value}>{usuario.nome}</Text>
             </View>
 
             <View style={styles.infoBox}>
@@ -58,12 +66,19 @@ const styles = StyleSheet.create({
         paddingHorizontal: 20,
         backgroundColor: '#fff',
     },
+    header: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        marginBottom: 30,
+    },
+    arrow: {
+        fontSize: 24,
+        marginRight: 10,
+    },
     title: {
         fontSize: 28,
         fontWeight: 'bold',
         color: '#005C39',
-        marginBottom: 30,
-        textAlign: 'center',
     },
     infoBox: {
         marginBottom: 24,
@@ -78,11 +93,12 @@ const styles = StyleSheet.create({
     value: {
         fontSize: 18,
         fontWeight: 'bold',
-        color: '#333',
     },
     loading: {
-        fontSize: 18,
-        textAlign: 'center',
-        marginTop: 100,
-    },
-});
+         fontSize: 18,
+         color: '#999',
+         textAlign: 'center',
+        marginTop: 50,
+},
+
+}) 

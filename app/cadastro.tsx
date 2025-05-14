@@ -6,28 +6,36 @@ import { Alert, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'reac
 export default function Cadastro() {
     const router = useRouter();
 
-    const [apelido, setApelido] = useState('');
+    const [nome, setNome] = useState('');
     const [email, setEmail] = useState('');
     const [cpf, setCpf] = useState('');
+    const [senha, setSenha] = useState('');
+    const [confirmarSenha, setConfirmarSenha] = useState('');
 
     const handleCadastro = async () => {
-        if (!apelido || !email || !cpf) {
-            Alert.alert('Erro', 'Por favor, preencha todos os campos.');
+        if (!nome || !email || !cpf || !senha || !confirmarSenha) {
+            Alert.alert('Erro', 'Preencha todos os campos.');
             return;
         }
 
-        const dadosUsuario = {
-            apelido,
+        if (senha !== confirmarSenha) {
+            Alert.alert('Erro', 'As senhas não coincidem.');
+            return;
+        }
+
+        const usuario = {
+            nome,
             email,
             cpf,
+            senha,
         };
 
         try {
-            await AsyncStorage.setItem('usuario', JSON.stringify(dadosUsuario));
+            await AsyncStorage.setItem('usuario', JSON.stringify(usuario));
             Alert.alert('Sucesso', 'Cadastro realizado com sucesso!');
-            router.replace('./home'); // Redireciona para a home
+            router.replace('./home');
         } catch (error) {
-            Alert.alert('Erro', 'Não foi possível salvar os dados.');
+            Alert.alert('Erro', 'Erro ao salvar os dados.');
         }
     };
 
@@ -36,12 +44,11 @@ export default function Cadastro() {
             <Text style={styles.title}>Cadastro</Text>
 
             <TextInput
-                placeholder="Apelido"
+                placeholder="Nome"
                 style={styles.input}
-                value={apelido}
-                onChangeText={setApelido}
+                value={nome}
+                onChangeText={setNome}
             />
-
             <TextInput
                 placeholder="Email"
                 style={styles.input}
@@ -50,13 +57,26 @@ export default function Cadastro() {
                 keyboardType="email-address"
                 autoCapitalize="none"
             />
-
             <TextInput
                 placeholder="CPF"
                 style={styles.input}
                 value={cpf}
                 onChangeText={setCpf}
                 keyboardType="numeric"
+            />
+            <TextInput
+                placeholder="Senha"
+                style={styles.input}
+                value={senha}
+                onChangeText={setSenha}
+                secureTextEntry
+            />
+            <TextInput
+                placeholder="Confirmar Senha"
+                style={styles.input}
+                value={confirmarSenha}
+                onChangeText={setConfirmarSenha}
+                secureTextEntry
             />
 
             <TouchableOpacity style={styles.button} onPress={handleCadastro}>

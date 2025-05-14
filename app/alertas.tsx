@@ -7,9 +7,9 @@ const AlertasScreen = () => {
 
     // Exemplo de dados das motos
     const motos = [
-        { numero: 1, status: 'disponivel' },
-        { numero: 2, status: 'em manutencao' },
-        { numero: 3, status: 'fora de operacao' },
+        { numero: 101, status: 'disponivel' },
+        { numero: 102, status: 'em manutencao' },
+        { numero: 103, status: 'fora de operacao' },
     ];
 
     // Função para definir a cor do status

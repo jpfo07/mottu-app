@@ -1,18 +1,36 @@
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useRouter } from 'expo-router';
 import { useState } from 'react';
-import { StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import { Alert, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 
 export default function Login() {
     const router = useRouter();
     const [email, setEmail] = useState('');
     const [senha, setSenha] = useState('');
 
-    const handleLogin = () => {
-        // Validação simples (substitua depois por lógica real de autenticação)
-        if (email && senha) {
-            router.push('./home'); // ou a tela principal após login
-        } else {
-            alert('Preencha todos os campos');
+    const handleLogin = async () => {
+        if (!email || !senha) {
+            Alert.alert('Erro', 'Preencha todos os campos.');
+            return;
+        }
+
+        try {
+            const userData = await AsyncStorage.getItem('usuario');
+
+            if (userData) {
+                const usuario = JSON.parse(userData);
+
+                if (email === usuario.email && senha === usuario.senha) {
+                    Alert.alert('Sucesso', 'Login realizado!');
+                    router.replace('/home');
+                } else {
+                    Alert.alert('Erro', 'Email ou senha incorretos.');
+                }
+            } else {
+                Alert.alert('Erro', 'Nenhum usuário encontrado.');
+            }
+        } catch (error) {
+            Alert.alert('Erro', 'Erro ao verificar os dados.');
         }
     };
 

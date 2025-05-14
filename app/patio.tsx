@@ -1,5 +1,8 @@
 import { useRouter } from 'expo-router';
 import { FlatList, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+// @ts-ignore
+import Ionicons from 'react-native-vector-icons/Ionicons';
+
 
 const motos = [
     { id: '101', status: 'Disponível' },
@@ -39,7 +42,12 @@ export default function Patio() {
 
     return (
         <View style={styles.container}>
-            <Text style={styles.title}>Pátio de Motos</Text>
+            <View style={styles.header}>
+                <TouchableOpacity onPress={() => router.replace('/home')}>
+                    <Ionicons name="arrow-back" size={30} color="#005C39" />
+                </TouchableOpacity>
+                <Text style={styles.title}>Pátio de Motos</Text>
+            </View>
             <FlatList
                 data={motos}
                 numColumns={3}
@@ -58,11 +66,16 @@ const styles = StyleSheet.create({
         backgroundColor: '#fff',
         paddingHorizontal: 16,
     },
+    header: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        marginBottom: 20,
+    },
     title: {
         fontSize: 24,
         fontWeight: 'bold',
-        marginBottom: 20,
         color: '#005C39',
+        flex: 1,
         textAlign: 'center',
     },
     grid: {

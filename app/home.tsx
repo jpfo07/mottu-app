@@ -32,7 +32,10 @@ export default function Home() {
         <View style={styles.container}>
             <View style={styles.header}>
                 <Text style={styles.logo}>Mottu</Text>
-                <Text style={styles.menu}>☰</Text>
+                {/* Ícone de menu hamburguer */}
+                <TouchableOpacity onPress={() => router.push('/menu')}>
+                    <Text style={styles.menu}>☰</Text>
+                </TouchableOpacity>
             </View>
 
             <Text style={styles.title}>Dashboard</Text>
