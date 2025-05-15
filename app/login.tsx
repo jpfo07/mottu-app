@@ -1,16 +1,21 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useRouter } from 'expo-router';
 import { useState } from 'react';
-import { Alert, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import { StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 
 export default function Login() {
     const router = useRouter();
     const [email, setEmail] = useState('');
     const [senha, setSenha] = useState('');
+    const [erroLogin, setErroLogin] = useState('');
+    const [tentouLogin, setTentouLogin] = useState(false); // pra ativar erro visual só depois do submit
 
     const handleLogin = async () => {
+        setTentouLogin(true);
+        setErroLogin('');
+
         if (!email || !senha) {
-            Alert.alert('Erro', 'Preencha todos os campos.');
+            setErroLogin('Preencha todos os campos.');
             return;
         }
 
@@ -21,25 +26,32 @@ export default function Login() {
                 const usuario = JSON.parse(userData);
 
                 if (email === usuario.email && senha === usuario.senha) {
-                    Alert.alert('Sucesso', 'Login realizado!');
+                    setErroLogin('');
                     router.replace('/home');
                 } else {
-                    Alert.alert('Erro', 'Email ou senha incorretos.');
+                    setErroLogin('Email ou senha incorretos.');
                 }
             } else {
-                Alert.alert('Erro', 'Nenhum usuário encontrado.');
+                setErroLogin('Nenhum usuário encontrado. Crie uma conta.');
             }
         } catch (error) {
-            Alert.alert('Erro', 'Erro ao verificar os dados.');
+            setErroLogin('Erro ao verificar os dados.');
         }
     };
+
+    const inputStyle = (campo: string) => [
+        styles.input,
+        tentouLogin && (!campo || erroLogin) && styles.inputErro,
+    ];
 
     return (
         <View style={styles.container}>
             <Text style={styles.title}>LOGIN</Text>
 
+            {erroLogin !== '' && <Text style={styles.erro}>{erroLogin}</Text>}
+
             <TextInput
-                style={styles.input}
+                style={inputStyle(email)}
                 placeholder="E-mail"
                 value={email}
                 onChangeText={setEmail}
@@ -48,7 +60,7 @@ export default function Login() {
             />
 
             <TextInput
-                style={styles.input}
+                style={inputStyle(senha)}
                 placeholder="Senha"
                 secureTextEntry
                 value={senha}
@@ -80,6 +92,12 @@ const styles = StyleSheet.create({
         marginBottom: 32,
         color: '#002C1B',
     },
+    erro: {
+        color: 'red',
+        textAlign: 'center',
+        marginBottom: 12,
+        fontSize: 14,
+    },
     input: {
         borderWidth: 1,
         borderColor: '#ccc',
@@ -87,6 +105,9 @@ const styles = StyleSheet.create({
         borderRadius: 8,
         marginBottom: 16,
         backgroundColor: '#F4F4F4',
+    },
+    inputErro: {
+        borderColor: 'red',
     },
     button: {
         backgroundColor: '#005C39',

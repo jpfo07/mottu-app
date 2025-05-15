@@ -4,14 +4,14 @@ import { FlatList, StyleSheet, Text, TouchableOpacity, View } from 'react-native
 const mockMotos: Record<string, { statusAtual: string; historico: string[] }> = {
     '101': {
         statusAtual: 'Disponível',
-        historico: ['Em manutenção', 'Aguardando retirada'],
+        historico: ['Em manutenção', 'Disponivel'],
     },
     '102': {
         statusAtual: 'Em manutenção',
-        historico: ['Disponível', 'Aguardando retirada'],
+        historico: ['Disponível', 'Sem operações'],
     },
     '103': {
-        statusAtual: 'Aguardando retirada',
+        statusAtual: 'Sem operações',
         historico: ['Em manutenção', 'Disponível'],
     },
     '104': {
@@ -20,6 +20,18 @@ const mockMotos: Record<string, { statusAtual: string; historico: string[] }> = 
     },
     '105': {
         statusAtual: 'Em manutenção',
+        historico: ['Disponível'],
+    },
+    '106': {
+        statusAtual: 'Sem operações',
+        historico: ['Disponível'],
+    },
+    '107': {
+        statusAtual: 'Disponivel',
+        historico: ['Disponível'],
+    },
+    '108': {
+        statusAtual: 'Disponivel',
         historico: ['Disponível'],
     },
 };

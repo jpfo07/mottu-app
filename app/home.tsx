@@ -25,8 +25,12 @@ export default function Home() {
 
     useEffect(() => {
         const carregarFoto = async () => {
-            const foto = await AsyncStorage.getItem('fotoPerfil');
-            if (foto) setFotoPerfil(foto);
+            const userData = await AsyncStorage.getItem('usuario');
+            if (userData) {
+                const usuario = JSON.parse(userData);
+                const foto = await AsyncStorage.getItem(`fotoPerfil_${usuario.cpf}`);
+                if (foto) setFotoPerfil(foto);
+            }
         };
         carregarFoto();
     }, []);
@@ -62,6 +66,7 @@ export default function Home() {
                     </TouchableOpacity>
                 )}
             </View>
+
             {menuVisible && (
                 <View style={styles.dropdown}>
                     <TouchableOpacity

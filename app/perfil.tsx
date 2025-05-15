@@ -17,6 +17,7 @@ type Usuario = {
     nome: string;
     email: string;
     cpf: string;
+    senha: string;
 };
 
 export default function Perfil() {
@@ -30,14 +31,16 @@ export default function Perfil() {
     useEffect(() => {
         const carregarDados = async () => {
             const dados = await AsyncStorage.getItem('usuario');
-            const fotoSalva = await AsyncStorage.getItem('fotoPerfil');
             if (dados) {
-                const parsed = JSON.parse(dados);
+                const parsed: Usuario = JSON.parse(dados);
                 setUsuario(parsed);
                 setNovoNome(parsed.nome);
                 setNovoEmail(parsed.email);
+
+                // Carregar foto específica pelo CPF
+                const fotoSalva = await AsyncStorage.getItem(`fotoPerfil_${parsed.cpf}`);
+                if (fotoSalva) setFoto(fotoSalva);
             }
-            if (fotoSalva) setFoto(fotoSalva);
         };
         carregarDados();
     }, []);
@@ -56,10 +59,11 @@ export default function Perfil() {
             quality: 1,
         });
 
-        if (!resultado.canceled && resultado.assets.length > 0) {
+        if (!resultado.canceled && resultado.assets.length > 0 && usuario) {
             const uri = resultado.assets[0].uri;
             setFoto(uri);
-            await AsyncStorage.setItem('fotoPerfil', uri);
+            // Salvar foto com chave pelo CPF
+            await AsyncStorage.setItem(`fotoPerfil_${usuario.cpf}`, uri);
         }
     };
 
@@ -71,8 +75,10 @@ export default function Perfil() {
             nome: novoNome,
             email: novoEmail,
         };
+
         setUsuario(usuarioAtualizado);
         await AsyncStorage.setItem('usuario', JSON.stringify(usuarioAtualizado));
+
         setModalVisible(false);
     };
 
@@ -93,9 +99,8 @@ export default function Perfil() {
                 <Text style={styles.title}>Perfil</Text>
             </View>
 
-            <ScrollView contentContainerStyle={styles.scrollContainer}>
-
-                <View style={styles.fotoContainer}>
+            <ScrollView contentContainerStyle={{ paddingBottom: 40 }}>
+                <TouchableOpacity onPress={escolherFoto} style={styles.fotoContainer}>
                     {foto ? (
                         <Image source={{ uri: foto }} style={styles.foto} />
                     ) : (
@@ -103,7 +108,7 @@ export default function Perfil() {
                             <Text style={{ color: '#888' }}>Selecionar Foto</Text>
                         </View>
                     )}
-                </View>
+                </TouchableOpacity>
 
                 <TouchableOpacity onPress={escolherFoto} style={styles.botaoAlterar}>
                     <Text style={styles.textoBotaoAlterar}>Alterar Foto</Text>
@@ -170,9 +175,6 @@ const styles = StyleSheet.create({
         paddingHorizontal: 20,
         backgroundColor: '#fff',
     },
-    scrollContainer: {
-        paddingBottom: 40,
-    },
     header: {
         flexDirection: 'row',
         alignItems: 'center',
@@ -189,7 +191,7 @@ const styles = StyleSheet.create({
     },
     fotoContainer: {
         alignSelf: 'center',
-        marginBottom: 30,
+        marginBottom: 10,
     },
     foto: {
         width: 120,
@@ -203,6 +205,19 @@ const styles = StyleSheet.create({
         backgroundColor: '#eee',
         justifyContent: 'center',
         alignItems: 'center',
+    },
+    botaoAlterar: {
+        marginTop: 10,
+        alignSelf: 'center',
+        backgroundColor: '#005C39',
+        paddingVertical: 6,
+        paddingHorizontal: 16,
+        borderRadius: 6,
+    },
+    textoBotaoAlterar: {
+        color: 'white',
+        fontWeight: 'bold',
+        fontSize: 14,
     },
     infoBox: {
         marginBottom: 24,
@@ -229,7 +244,6 @@ const styles = StyleSheet.create({
         padding: 14,
         borderRadius: 10,
         marginTop: 20,
-        marginBottom: 20,
         alignItems: 'center',
     },
     editButtonText: {
@@ -278,18 +292,5 @@ const styles = StyleSheet.create({
     saveText: {
         color: '#005C39',
         fontWeight: 'bold',
-    },
-    botaoAlterar: {
-        marginTop: 10,
-        alignSelf: 'center',
-        backgroundColor: '#005C39',
-        paddingVertical: 6,
-        paddingHorizontal: 16,
-        borderRadius: 6,
-    },
-    textoBotaoAlterar: {
-        color: 'white',
-        fontWeight: 'bold',
-        fontSize: 14,
     },
 });
