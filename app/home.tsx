@@ -1,7 +1,9 @@
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useRouter } from 'expo-router';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import {
     FlatList,
+    Image,
     StyleSheet,
     Text,
     TouchableOpacity,
@@ -19,6 +21,15 @@ const motos = [
 export default function Home() {
     const router = useRouter();
     const [menuVisible, setMenuVisible] = useState(false);
+    const [fotoPerfil, setFotoPerfil] = useState<string | null>(null);
+
+    useEffect(() => {
+        const carregarFoto = async () => {
+            const foto = await AsyncStorage.getItem('fotoPerfil');
+            if (foto) setFotoPerfil(foto);
+        };
+        carregarFoto();
+    }, []);
 
     const renderItem = ({ item }: { item: any }) => (
         <TouchableOpacity
@@ -36,7 +47,6 @@ export default function Home() {
 
     return (
         <View style={styles.container}>
-
             <View style={styles.header}>
                 <Text style={styles.logo}>Mottu</Text>
                 <TouchableOpacity onPress={() => setMenuVisible(!menuVisible)}>
@@ -44,7 +54,14 @@ export default function Home() {
                 </TouchableOpacity>
             </View>
 
-
+            <View style={styles.subHeader}>
+                <Text style={styles.title}>Dashboard</Text>
+                {fotoPerfil && (
+                    <TouchableOpacity onPress={() => router.push('./perfil')}>
+                        <Image source={{ uri: fotoPerfil }} style={styles.fotoPerfil} />
+                    </TouchableOpacity>
+                )}
+            </View>
             {menuVisible && (
                 <View style={styles.dropdown}>
                     <TouchableOpacity
@@ -74,8 +91,6 @@ export default function Home() {
                 </View>
             )}
 
-            <Text style={styles.title}>Dashboard</Text>
-
             <FlatList
                 data={motos}
                 renderItem={renderItem}
@@ -103,6 +118,21 @@ const styles = StyleSheet.create({
     },
     logo: { color: 'white', fontSize: 24, fontWeight: 'bold' },
     menu: { color: 'white', fontSize: 24 },
+    subHeader: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        paddingHorizontal: 16,
+        marginTop: 12,
+        marginBottom: 8,
+    },
+    fotoPerfil: {
+        width: 40,
+        height: 40,
+        borderRadius: 20,
+        borderWidth: 1,
+        borderColor: '#ccc',
+    },
     dropdown: {
         position: 'absolute',
         top: 100,
@@ -125,7 +155,7 @@ const styles = StyleSheet.create({
         borderBottomWidth: 1,
         borderBottomColor: '#ddd',
     },
-    title: { fontSize: 22, fontWeight: 'bold', padding: 16 },
+    title: { fontSize: 22, fontWeight: 'bold' },
     list: { paddingHorizontal: 16 },
     card: {
         backgroundColor: '#F4F4F4',
