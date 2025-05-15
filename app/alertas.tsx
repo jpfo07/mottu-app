@@ -5,14 +5,14 @@ import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-nati
 const AlertasScreen = () => {
     const navigation = useNavigation();
 
-    // Exemplo de dados das motos
+
     const motos = [
         { numero: 101, status: 'disponivel' },
         { numero: 102, status: 'em manutencao' },
         { numero: 103, status: 'fora de operacao' },
     ];
 
-    // Função para definir a cor do status
+
     const getStatusColor = (status: string) => {
         switch (status) {
             case 'disponivel':
@@ -26,7 +26,7 @@ const AlertasScreen = () => {
         }
     };
 
-    // Função para definir a legenda com base no status
+
     const getStatusText = (status: string) => {
         switch (status) {
             case 'disponivel':
@@ -42,7 +42,7 @@ const AlertasScreen = () => {
 
     return (
         <View style={styles.container}>
-            {/* Título e seta */}
+
             <View style={styles.header}>
                 <TouchableOpacity onPress={() => navigation.goBack()}>
                     <Text style={styles.arrow}>←</Text>
@@ -50,7 +50,7 @@ const AlertasScreen = () => {
                 <Text style={styles.title}>Alertas</Text>
             </View>
 
-            {/* Lista de alertas */}
+
             <ScrollView style={styles.alertsContainer}>
                 {motos.map((moto) => (
                     <View key={moto.numero} style={styles.alert}>

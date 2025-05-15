@@ -28,7 +28,7 @@ export default function Index() {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: '#005C39', // Verde escuro
+        backgroundColor: '#005C39',
         justifyContent: 'center',
         alignItems: 'center',
         padding: 20,
@@ -40,7 +40,7 @@ const styles = StyleSheet.create({
         marginBottom: 40,
     },
     messageBox: {
-        backgroundColor: '#2E7B5B', // Verde médio transparente
+        backgroundColor: '#2E7B5B',
         padding: 20,
         borderRadius: 10,
         marginBottom: 40,
@@ -51,7 +51,7 @@ const styles = StyleSheet.create({
         textAlign: 'center',
     },
     button: {
-        backgroundColor: '#00B260', // Verde claro
+        backgroundColor: '#00B260',
         paddingVertical: 14,
         paddingHorizontal: 50,
         borderRadius: 8,

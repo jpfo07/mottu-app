@@ -24,7 +24,7 @@ export default function Perfil() {
     }, []);
 
     if (!usuario) {
-         return (
+        return (
             <View style={styles.container}>
                 <Text style={styles.loading}>Carregando dados...</Text>
             </View>
@@ -33,7 +33,7 @@ export default function Perfil() {
 
     return (
         <View style={styles.container}>
-            {/* Cabeçalho com seta de voltar */}
+            { }
             <View style={styles.header}>
                 <TouchableOpacity onPress={() => router.back()}>
                     <Text style={styles.arrow}>←</Text>
@@ -95,10 +95,10 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
     },
     loading: {
-         fontSize: 18,
-         color: '#999',
-         textAlign: 'center',
+        fontSize: 18,
+        color: '#999',
+        textAlign: 'center',
         marginTop: 50,
-},
+    },
 
 }) 

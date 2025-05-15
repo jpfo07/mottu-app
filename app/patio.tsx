@@ -21,11 +21,11 @@ export default function Patio() {
     const getColor = (status: string) => {
         switch (status) {
             case 'Disponível':
-                return '#00B260'; // Verde
+                return '#00B260';
             case 'Em manutenção':
-                return '#FFC107'; // Amarelo
+                return '#FFC107';
             case 'Sem operações':
-                return '#D32F2F'; // Vermelho
+                return '#D32F2F';
             default:
                 return '#CCC';
         }

@@ -36,7 +36,7 @@ export default function Home() {
 
     return (
         <View style={styles.container}>
-            {/* Header */}
+
             <View style={styles.header}>
                 <Text style={styles.logo}>Mottu</Text>
                 <TouchableOpacity onPress={() => setMenuVisible(!menuVisible)}>
@@ -44,7 +44,7 @@ export default function Home() {
                 </TouchableOpacity>
             </View>
 
-            {/* Dropdown flutuante visível acima de tudo */}
+
             {menuVisible && (
                 <View style={styles.dropdown}>
                     <TouchableOpacity
@@ -109,8 +109,8 @@ const styles = StyleSheet.create({
         right: 16,
         backgroundColor: 'white',
         borderRadius: 8,
-        elevation: 8, // Android sombra
-        shadowColor: '#000', // iOS sombra
+        elevation: 8,
+        shadowColor: '#000',
         shadowOpacity: 0.2,
         shadowOffset: { width: 0, height: 2 },
         shadowRadius: 6,
