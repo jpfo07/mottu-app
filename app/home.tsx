@@ -1,7 +1,12 @@
-// app/home.tsx
-
 import { useRouter } from 'expo-router';
-import { FlatList, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { useState } from 'react';
+import {
+    FlatList,
+    StyleSheet,
+    Text,
+    TouchableOpacity,
+    View
+} from 'react-native';
 
 const motos = [
     { id: '101', status1: 'Disponível', status2: 'Em manutenção' },
@@ -13,6 +18,7 @@ const motos = [
 
 export default function Home() {
     const router = useRouter();
+    const [menuVisible, setMenuVisible] = useState(false);
 
     const renderItem = ({ item }: { item: any }) => (
         <TouchableOpacity
@@ -30,13 +36,43 @@ export default function Home() {
 
     return (
         <View style={styles.container}>
+            {/* Header */}
             <View style={styles.header}>
                 <Text style={styles.logo}>Mottu</Text>
-                {/* Ícone de menu hamburguer */}
-                <TouchableOpacity onPress={() => router.push('/menu')}>
+                <TouchableOpacity onPress={() => setMenuVisible(!menuVisible)}>
                     <Text style={styles.menu}>☰</Text>
                 </TouchableOpacity>
             </View>
+
+            {/* Dropdown flutuante visível acima de tudo */}
+            {menuVisible && (
+                <View style={styles.dropdown}>
+                    <TouchableOpacity
+                        onPress={() => {
+                            setMenuVisible(false);
+                            router.push('./perfil');
+                        }}
+                    >
+                        <Text style={styles.dropdownItem}>Perfil</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity
+                        onPress={() => {
+                            setMenuVisible(false);
+                            router.push('./alertas');
+                        }}
+                    >
+                        <Text style={styles.dropdownItem}>Alertas</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity
+                        onPress={() => {
+                            setMenuVisible(false);
+                            router.push('./patio');
+                        }}
+                    >
+                        <Text style={styles.dropdownItem}>Controle do Pátio</Text>
+                    </TouchableOpacity>
+                </View>
+            )}
 
             <Text style={styles.title}>Dashboard</Text>
 
@@ -51,16 +87,44 @@ export default function Home() {
 }
 
 const styles = StyleSheet.create({
-    container: { flex: 1, backgroundColor: '#fff', paddingTop: 50 },
+    container: {
+        flex: 1,
+        backgroundColor: '#fff',
+        paddingTop: 50,
+        position: 'relative',
+    },
     header: {
         backgroundColor: '#005C39',
         flexDirection: 'row',
         justifyContent: 'space-between',
         padding: 16,
         alignItems: 'center',
+        zIndex: 1,
     },
     logo: { color: 'white', fontSize: 24, fontWeight: 'bold' },
     menu: { color: 'white', fontSize: 24 },
+    dropdown: {
+        position: 'absolute',
+        top: 100,
+        right: 16,
+        backgroundColor: 'white',
+        borderRadius: 8,
+        elevation: 8, // Android sombra
+        shadowColor: '#000', // iOS sombra
+        shadowOpacity: 0.2,
+        shadowOffset: { width: 0, height: 2 },
+        shadowRadius: 6,
+        zIndex: 999,
+        padding: 8,
+        width: 180,
+    },
+    dropdownItem: {
+        padding: 12,
+        fontSize: 16,
+        color: '#005C39',
+        borderBottomWidth: 1,
+        borderBottomColor: '#ddd',
+    },
     title: { fontSize: 22, fontWeight: 'bold', padding: 16 },
     list: { paddingHorizontal: 16 },
     card: {
