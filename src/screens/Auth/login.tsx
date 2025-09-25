@@ -1,128 +1,111 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { useRouter } from 'expo-router';
-import { useState } from 'react';
+import React, { useContext, useState } from 'react';
 import { StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import { ThemeContext } from '../../context/ThemeContext';
+import { UserContext } from '../../context/UserContext';
 
-export default function Login() {
-    const router = useRouter();
-    const [email, setEmail] = useState('');
-    const [senha, setSenha] = useState('');
-    const [erroLogin, setErroLogin] = useState('');
-    const [tentouLogin, setTentouLogin] = useState(false); // pra ativar erro visual só depois do submit
+// Tipos
+type ErrorKeys = 'email' | 'senha';
 
-    const handleLogin = async () => {
-        setTentouLogin(true);
-        setErroLogin('');
+type FormErrors = {
+  email: string;
+  senha: string;
+};
 
-        if (!email || !senha) {
-            setErroLogin('Preencha todos os campos.');
-            return;
+export default function LoginScreen() {
+  const { setUser } = useContext(UserContext);
+  const { theme } = useContext(ThemeContext);
+
+  const [email, setEmail] = useState('');
+  const [senha, setSenha] = useState('');
+  const [mostrarSenha, setMostrarSenha] = useState(false);
+  const [erroLogin, setErroLogin] = useState('');
+  const [tentouLogin, setTentouLogin] = useState(false);
+  const [errors, setErrors] = useState<FormErrors>({ email: '', senha: '' });
+
+  const validar = () => {
+    const novosErros: FormErrors = { email: '', senha: '' };
+    if (!email.trim()) novosErros.email = 'Preencha o email';
+    if (!senha.trim()) novosErros.senha = 'Preencha a senha';
+    setErrors(novosErros);
+    return Object.values(novosErros).every(err => err === '');
+  };
+
+  const handleLogin = async () => {
+    setTentouLogin(true);
+    setErroLogin('');
+    if (!validar()) return;
+
+    try {
+      const userData = await AsyncStorage.getItem('usuario');
+      if (userData) {
+        const usuario = JSON.parse(userData);
+        if (email === usuario.email && senha === usuario.senha) {
+          setUser(usuario);
+        } else {
+          setErroLogin('Email ou senha incorretos.');
         }
+      } else {
+        setErroLogin('Nenhum usuário encontrado. Crie uma conta.');
+      }
+    } catch {
+      setErroLogin('Erro ao verificar os dados.');
+    }
+  };
 
-        try {
-            const userData = await AsyncStorage.getItem('usuario');
+  const inputStyle = (campo: ErrorKeys) => [
+    styles.input,
+    { backgroundColor: theme.card, color: theme.text, borderColor: theme.card },
+    tentouLogin && (errors[campo] || erroLogin) && { borderColor: '#FF5C5C' },
+  ];
 
-            if (userData) {
-                const usuario = JSON.parse(userData);
+  return (
+    <View style={[styles.container, { backgroundColor: theme.background }]}>
+      <Text style={[styles.title, { color: theme.text }]}>LOGIN</Text>
 
-                if (email === usuario.email && senha === usuario.senha) {
-                    setErroLogin('');
-                    router.replace('/home');
-                } else {
-                    setErroLogin('Email ou senha incorretos.');
-                }
-            } else {
-                setErroLogin('Nenhum usuário encontrado. Crie uma conta.');
-            }
-        } catch (error) {
-            setErroLogin('Erro ao verificar os dados.');
-        }
-    };
+      {erroLogin !== '' && <Text style={styles.erro}>{erroLogin}</Text>}
 
-    const inputStyle = (campo: string) => [
-        styles.input,
-        tentouLogin && (!campo || erroLogin) && styles.inputErro,
-    ];
+      <TextInput
+        placeholder="E-mail"
+        placeholderTextColor="#888"
+        style={inputStyle('email')}
+        value={email}
+        onChangeText={(text) => { setEmail(text); if (errors.email) setErrors({ ...errors, email: '' }); }}
+        keyboardType="email-address"
+        autoCapitalize="none"
+      />
+      {errors.email && <Text style={styles.erro}>{errors.email}</Text>}
 
-    return (
-        <View style={styles.container}>
-            <Text style={styles.title}>LOGIN</Text>
+      <View style={styles.senhaContainer}>
+        <TextInput
+          placeholder="Senha"
+          placeholderTextColor="#888"
+          style={[inputStyle('senha'), styles.senhaInput]}
+          value={senha}
+          onChangeText={(text) => { setSenha(text); if (errors.senha) setErrors({ ...errors, senha: '' }); }}
+          secureTextEntry={!mostrarSenha}
+        />
+        <TouchableOpacity onPress={() => setMostrarSenha(!mostrarSenha)}>
+          <Text style={styles.eyeIcon}>{mostrarSenha ? '🚫' : '👁️'}</Text>
+        </TouchableOpacity>
+      </View>
+      {errors.senha && <Text style={styles.erro}>{errors.senha}</Text>}
 
-            {erroLogin !== '' && <Text style={styles.erro}>{erroLogin}</Text>}
-
-            <TextInput
-                style={inputStyle(email)}
-                placeholder="E-mail"
-                value={email}
-                onChangeText={setEmail}
-                keyboardType="email-address"
-                autoCapitalize="none"
-            />
-
-            <TextInput
-                style={inputStyle(senha)}
-                placeholder="Senha"
-                secureTextEntry
-                value={senha}
-                onChangeText={setSenha}
-            />
-
-            <TouchableOpacity style={styles.button} onPress={handleLogin}>
-                <Text style={styles.buttonText}>Entrar</Text>
-            </TouchableOpacity>
-
-            <TouchableOpacity onPress={() => router.push('./cadastro')}>
-                <Text style={styles.link}>Criar conta</Text>
-            </TouchableOpacity>
-        </View>
-    );
+      <TouchableOpacity style={[styles.button, { backgroundColor: theme.primary }]} onPress={handleLogin}>
+        <Text style={[styles.buttonText, { color: theme.text }]}>Entrar</Text>
+      </TouchableOpacity>
+    </View>
+  );
 }
 
 const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        justifyContent: 'center',
-        padding: 24,
-        backgroundColor: '#fff',
-    },
-    title: {
-        fontSize: 24,
-        fontWeight: 'bold',
-        textAlign: 'center',
-        marginBottom: 32,
-        color: '#002C1B',
-    },
-    erro: {
-        color: 'red',
-        textAlign: 'center',
-        marginBottom: 12,
-        fontSize: 14,
-    },
-    input: {
-        borderWidth: 1,
-        borderColor: '#ccc',
-        padding: 12,
-        borderRadius: 8,
-        marginBottom: 16,
-        backgroundColor: '#F4F4F4',
-    },
-    inputErro: {
-        borderColor: 'red',
-    },
-    button: {
-        backgroundColor: '#005C39',
-        padding: 16,
-        borderRadius: 8,
-        alignItems: 'center',
-        marginBottom: 12,
-    },
-    buttonText: {
-        color: '#fff',
-        fontWeight: 'bold',
-    },
-    link: {
-        color: '#005C39',
-        textAlign: 'center',
-        marginTop: 10,
-    },
+  container: { flex: 1, justifyContent: 'center', padding: 24 },
+  title: { fontSize: 24, fontWeight: 'bold', textAlign: 'center', marginBottom: 32 },
+  input: { borderWidth: 1, padding: 12, borderRadius: 8, marginBottom: 16 },
+  senhaContainer: { flexDirection: 'row', alignItems: 'center', borderWidth: 1, borderRadius: 8, marginBottom: 16, backgroundColor: '#fff' },
+  senhaInput: { flex: 1, borderWidth: 0, padding: 12 },
+  eyeIcon: { paddingHorizontal: 14, fontSize: 18, color: '#555' },
+  button: { padding: 16, borderRadius: 8, alignItems: 'center', marginBottom: 12 },
+  buttonText: { fontWeight: 'bold', fontSize: 16 },
+  erro: { color: '#FF5C5C', textAlign: 'center', marginBottom: 12 },
 });

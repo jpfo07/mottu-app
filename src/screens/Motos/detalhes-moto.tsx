@@ -1,114 +1,53 @@
 import { useLocalSearchParams, useRouter } from 'expo-router';
-import { FlatList, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
-
-const mockMotos: Record<string, { statusAtual: string; historico: string[] }> = {
-    '101': {
-        statusAtual: 'Disponível',
-        historico: ['Em manutenção', 'Disponivel'],
-    },
-    '102': {
-        statusAtual: 'Em manutenção',
-        historico: ['Disponível', 'Sem operações'],
-    },
-    '103': {
-        statusAtual: 'Sem operações',
-        historico: ['Em manutenção', 'Disponível'],
-    },
-    '104': {
-        statusAtual: 'Disponível',
-        historico: ['Em manutenção'],
-    },
-    '105': {
-        statusAtual: 'Em manutenção',
-        historico: ['Disponível'],
-    },
-    '106': {
-        statusAtual: 'Sem operações',
-        historico: ['Disponível'],
-    },
-    '107': {
-        statusAtual: 'Disponivel',
-        historico: ['Disponível'],
-    },
-    '108': {
-        statusAtual: 'Disponivel',
-        historico: ['Disponível'],
-    },
-};
+import React, { useContext, useEffect, useState } from 'react';
+import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { ThemeContext } from '../../context/ThemeContext';
+import { UserContext } from '../../context/UserContext';
+import { getMotos } from '../../services/motosServices';
 
 export default function DetalhesMoto() {
-    const router = useRouter();
-    const { id } = useLocalSearchParams();
+  const { theme } = useContext(ThemeContext);
+  const { user } = useContext(UserContext);
+  const router = useRouter();
+  const { id } = useLocalSearchParams();
 
-    const moto = mockMotos[id as string] || {
-        statusAtual: 'Desconhecido',
-        historico: [],
+  const [moto, setMoto] = useState<any>(null);
+
+  useEffect(() => {
+    const carregarMoto = async () => {
+      if (user && id) {
+        const data = await getMotos(user.id);
+        const motoSelecionada = data.find((m: any) => m.id === id);
+        setMoto(motoSelecionada);
+      }
     };
+    carregarMoto();
+  }, [id, user]);
 
-    return (
-        <View style={styles.container}>
-            <TouchableOpacity onPress={() => router.back()}>
-                <Text style={styles.back}>← Voltar</Text>
-            </TouchableOpacity>
+  if (!moto) return <Text>Carregando...</Text>;
 
-            <Text style={styles.title}>Moto {id}</Text>
+  return (
+    <View style={[styles.container, { backgroundColor: theme.background }]}>
+      <TouchableOpacity onPress={() => router.back()}>
+        <Text style={{ color: theme.primary, marginBottom: 10 }}>← Voltar</Text>
+      </TouchableOpacity>
 
-            <View style={styles.section}>
-                <Text style={styles.sectionTitle}>Status Atual</Text>
-                <Text style={styles.statusAtual}>{moto.statusAtual}</Text>
-            </View>
+      <Text style={[styles.title, { color: theme.text }]}>Moto {moto.numero}</Text>
 
-            <View style={styles.section}>
-                <Text style={styles.sectionTitle}>Histórico de Status</Text>
-                <FlatList
-                    data={moto.historico}
-                    keyExtractor={(item, index) => `${item}-${index}`}
-                    renderItem={({ item }) => (
-                        <Text style={styles.historicoItem}>• {item}</Text>
-                    )}
-                />
-            </View>
-        </View>
-    );
+      <Text style={{ color: theme.text, marginBottom: 8 }}>
+        Status: {moto.status}
+      </Text>
+
+      <TouchableOpacity
+        onPress={() => router.push(`/Patios/detalhes?id=${moto.patio.id}`)}
+      >
+        <Text style={{ color: theme.primary }}>Ver Pátio: {moto.patio.nome}</Text>
+      </TouchableOpacity>
+    </View>
+  );
 }
 
 const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        backgroundColor: '#fff',
-        paddingTop: 50,
-        paddingHorizontal: 20,
-    },
-    back: {
-        fontSize: 16,
-        color: '#00B260',
-        marginBottom: 10,
-    },
-    title: {
-        fontSize: 26,
-        fontWeight: 'bold',
-        marginBottom: 20,
-        color: '#005C39',
-    },
-    section: {
-        marginBottom: 24,
-    },
-    sectionTitle: {
-        fontSize: 18,
-        fontWeight: '600',
-        marginBottom: 8,
-        color: '#333',
-    },
-    statusAtual: {
-        fontSize: 16,
-        backgroundColor: '#DFF5EC',
-        padding: 10,
-        borderRadius: 8,
-        color: '#005C39',
-    },
-    historicoItem: {
-        fontSize: 16,
-        marginBottom: 6,
-        color: '#444',
-    },
+  container: { flex: 1, padding: 16 },
+  title: { fontSize: 24, fontWeight: 'bold', marginBottom: 16 },
 });
