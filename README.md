@@ -13,7 +13,7 @@ O **Mottu App** é um aplicativo mobile desenvolvido em **React Native (Expo)** 
 ## 👨‍💻 Integrantes
 - **João Paulo Francisco de Oliveira** — RM: 557410 
 - **Marcelo Antonio Scoleso Junior**   — RM: 557481  
-- **** — RM: XXXXX — 
+- **João Victor Rebello de Santis**    — RM: 555287 
 
 ## ▶️ Como executar o projeto
 1. Clone este repositório:
