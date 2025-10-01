@@ -1,7 +1,7 @@
 # 📱 Mottu App
 
 ## 🚀 Proposta
-O **Mottu App** é um aplicativo mobile desenvolvido em **React Native (Expo)** com o objetivo de [colocar aqui a proposta — ex: facilitar o gerenciamento de motos, cadastro de usuários, etc.].  
+O **Mottu App** é um aplicativo mobile desenvolvido em **React Native (Expo)** com o objetivo de facilitar o gerenciamento de motos.
 
 ## ⚙️ Funcionalidades
 - Cadastro de usuários  
