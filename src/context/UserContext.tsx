@@ -1,4 +1,5 @@
-import React, { createContext, ReactNode, useState } from 'react';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import React, { createContext, ReactNode, useEffect, useState } from 'react';
 
 export interface User {
   id: string;
@@ -23,9 +24,17 @@ export const UserContext = createContext<UserContextType>({
 export const UserProvider = ({ children }: { children: ReactNode }) => {
   const [user, setUser] = useState<User | null>(null);
 
+  useEffect(() => {
+    const carregarUsuario = async () => {
+      const usuarioSalvo = await AsyncStorage.getItem('usuario');
+      if (usuarioSalvo) setUser(JSON.parse(usuarioSalvo));
+    };
+    carregarUsuario();
+  }, []);
+
   const logout = async () => {
     setUser(null);
-    // Aqui você pode limpar tokens ou dados do AsyncStorage
+    await AsyncStorage.removeItem('usuario');
   };
 
   return (

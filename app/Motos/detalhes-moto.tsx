@@ -1,13 +1,11 @@
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import React, { useContext, useEffect, useState } from 'react';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
-import { ThemeContext } from '../../context/ThemeContext';
-import { UserContext } from '../../context/UserContext';
-import { getMotos } from '../../services/motosServices';
+import { ThemeContext } from '../../src/context/ThemeContext';
+import { getMotos } from '../../src/services/motosServices';
 
 export default function DetalhesMoto() {
   const { theme } = useContext(ThemeContext);
-  const { user } = useContext(UserContext);
   const router = useRouter();
   const { id } = useLocalSearchParams();
 
@@ -15,14 +13,19 @@ export default function DetalhesMoto() {
 
   useEffect(() => {
     const carregarMoto = async () => {
-      if (user && id) {
-        const data = await getMotos(user.id);
+      if (!id) return;
+
+      try {
+        const data = await getMotos(); // sem user.id
         const motoSelecionada = data.find((m: any) => m.id === id);
         setMoto(motoSelecionada);
+      } catch (error: any) {
+        console.error('Erro ao carregar moto:', error.response?.data || error.message);
       }
     };
+
     carregarMoto();
-  }, [id, user]);
+  }, [id]);
 
   if (!moto) return <Text>Carregando...</Text>;
 
@@ -33,14 +36,9 @@ export default function DetalhesMoto() {
       </TouchableOpacity>
 
       <Text style={[styles.title, { color: theme.text }]}>Moto {moto.numero}</Text>
+      <Text style={{ color: theme.text, marginBottom: 8 }}>Status: {moto.status}</Text>
 
-      <Text style={{ color: theme.text, marginBottom: 8 }}>
-        Status: {moto.status}
-      </Text>
-
-      <TouchableOpacity
-        onPress={() => router.push(`/Patios/detalhes?id=${moto.patio.id}`)}
-      >
+      <TouchableOpacity onPress={() => router.push(`/Patios/detalhes-patio?id=${moto.patio.id}`)}>
         <Text style={{ color: theme.primary }}>Ver Pátio: {moto.patio.nome}</Text>
       </TouchableOpacity>
     </View>

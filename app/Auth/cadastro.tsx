@@ -1,9 +1,10 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useRouter } from 'expo-router';
 import React, { useContext, useState } from 'react';
 import { Alert, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import uuid from 'react-native-uuid';
-import { ThemeContext } from '../../context/ThemeContext';
-import { UserContext } from '../../context/UserContext';
+import { ThemeContext } from '../../src/context/ThemeContext';
+import { UserContext } from '../../src/context/UserContext';
 
 // Tipos
 type ErrorKeys = 'nome' | 'email' | 'cpf' | 'senha' | 'confirmarSenha';
@@ -19,6 +20,7 @@ type FormErrors = {
 export default function CadastroScreen() {
   const { setUser } = useContext(UserContext);
   const { theme } = useContext(ThemeContext);
+  const router = useRouter();
 
   const [nome, setNome] = useState('');
   const [email, setEmail] = useState('');
@@ -35,7 +37,6 @@ export default function CadastroScreen() {
     confirmarSenha: '',
   });
 
-  // Formata CPF
   const formatarCPF = (texto: string) => {
     const numeros = texto.replace(/\D/g, '').slice(0, 11);
     let cpfFormatado = numeros;
@@ -45,7 +46,6 @@ export default function CadastroScreen() {
     return cpfFormatado;
   };
 
-  // Validação dos campos
   const validar = () => {
     const novosErros: FormErrors = { nome: '', email: '', cpf: '', senha: '', confirmarSenha: '' };
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -62,13 +62,12 @@ export default function CadastroScreen() {
     return Object.values(novosErros).every(err => err === '');
   };
 
-  // Cadastro
   const handleCadastro = async () => {
     if (!validar()) return;
 
     const usuario = {
       id: uuid.v4().toString(),
-      name: nome,
+      nome: nome,
       email,
       cpf: formatarCPF(cpf),
       senha,
@@ -76,8 +75,9 @@ export default function CadastroScreen() {
 
     try {
       await AsyncStorage.setItem('usuario', JSON.stringify(usuario));
-      setUser(usuario); // Atualiza contexto global
+      setUser(usuario);
       Alert.alert('Sucesso', 'Cadastro realizado com sucesso!');
+      router.push('./login'); // Navega para login após cadastro
     } catch {
       Alert.alert('Erro', 'Erro ao salvar os dados.');
     }
@@ -124,7 +124,6 @@ export default function CadastroScreen() {
       />
       {errors.cpf && <Text style={styles.errorText}>{errors.cpf}</Text>}
 
-      {/* SENHA */}
       <View style={styles.senhaContainer}>
         <TextInput
           placeholder="Senha"
@@ -140,7 +139,6 @@ export default function CadastroScreen() {
       </View>
       {errors.senha && <Text style={styles.errorText}>{errors.senha}</Text>}
 
-      {/* CONFIRMAR SENHA */}
       <View style={styles.senhaContainer}>
         <TextInput
           placeholder="Confirmar Senha"

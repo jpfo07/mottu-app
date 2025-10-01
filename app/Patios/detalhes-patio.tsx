@@ -1,14 +1,12 @@
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import React, { useContext, useEffect, useState } from 'react';
 import { FlatList, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
-import { ThemeContext } from '../../context/ThemeContext';
-import { UserContext } from '../../context/UserContext';
-import { getMotos } from '../../services/motosServices';
-import { getPatios } from '../../services/patiosServices';
+import { ThemeContext } from '../../src/context/ThemeContext';
+import { getMotos } from '../../src/services/motosServices';
+import { getPatios } from '../../src/services/patiosServices';
 
 export default function DetalhesPatio() {
   const { theme } = useContext(ThemeContext);
-  const { user } = useContext(UserContext);
   const router = useRouter();
   const { id } = useLocalSearchParams();
   const patioId = Array.isArray(id) ? id[0] : id;
@@ -18,20 +16,35 @@ export default function DetalhesPatio() {
 
   useEffect(() => {
     const carregarPatio = async () => {
-      if (!user || !patioId) return;
+      if (!patioId) return;
 
-      const patiosData = await getPatios(user.id);
-      const patioSelecionado = patiosData.find((p: any) => p.id === patioId);
-      setPatio(patioSelecionado);
+      try {
+        // Busca todos os pátios e seleciona pelo id
+        const patiosData = await getPatios();
+        const patioSelecionado = patiosData.find((p: any) => p.id === patioId);
+        setPatio(patioSelecionado);
 
-      const motosData = await getMotos(user.id);
-      const motosDoPatio = motosData.filter((m: any) => m.patio.id === patioId);
-      setMotos(motosDoPatio);
+        // Busca todas as motos e filtra pelo pátio
+        const motosData = await getMotos();
+        const motosDoPatio = motosData.filter((m: any) => m.patio.id === patioId);
+        setMotos(motosDoPatio);
+      } catch (error: any) {
+        console.error('Erro ao carregar pátio ou motos:', error.response?.data || error.message);
+      }
     };
-    carregarPatio();
-  }, [patioId, user]);
 
-  if (!patio) return <Text>Carregando...</Text>;
+    carregarPatio();
+  }, [patioId]);
+
+  if (!patio) {
+    return (
+      <View style={[styles.container, { backgroundColor: theme.background }]}>
+        <Text style={{ color: theme.text, textAlign: 'center', marginTop: 50 }}>
+          Carregando pátio...
+        </Text>
+      </View>
+    );
+  }
 
   return (
     <View style={[styles.container, { backgroundColor: theme.background }]}>
@@ -46,12 +59,13 @@ export default function DetalhesPatio() {
       </Text>
 
       <Text style={[styles.subtitle, { color: theme.text }]}>Motos no pátio:</Text>
+
       <FlatList
         data={motos}
         keyExtractor={(item) => item.id}
         renderItem={({ item }) => (
           <TouchableOpacity
-            onPress={() => router.push(`/Motos/detalhes?id=${item.id}`)}
+            onPress={() => router.push(`/Motos/detalhes-moto?id=${item.id}`)}
           >
             <Text style={{ color: theme.primary, fontSize: 16 }}>
               {item.numero} - {item.status}

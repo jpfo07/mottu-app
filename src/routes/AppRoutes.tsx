@@ -4,14 +4,14 @@ import React, { useContext } from 'react';
 import { UserContext } from '../context/UserContext';
 
 // Import das telas
-import CadastroScreen from '../screens/Auth/cadastro';
-import LoginScreen from '../screens/Auth/login';
-import Index from '../screens/Home';
-import AlertasScreen from '../screens/Home/alertas';
-import HomeScreen from '../screens/Home/home';
-import DetalheMotoScreen from '../screens/Motos/detalhes-moto';
-import PatioScreen from '../screens/Patios';
-import PerfilScreen from '../screens/Perfil/perfil';
+import CadastroScreen from '../../app/Auth/cadastro';
+import LoginScreen from '../../app/Auth/login';
+import AlertasScreen from '../../app/Home/alertas';
+import HomeScreen from '../../app/Home/home';
+import Index from '../../app/index';
+import DetalheMotoScreen from '../../app/Motos/detalhes-moto';
+import PatioScreen from '../../app/Patios';
+import PerfilScreen from '../../app/Perfil/perfil';
 
 
 const Stack = createNativeStackNavigator();

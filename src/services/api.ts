@@ -1,9 +1,9 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
 
-// Base da sua API Spring Boot
+// Base da sua API Spring Boot hospedada no Render
 const api = axios.create({
-  baseURL: 'http://localhost:8080', // troque para o IP/URL do seu backend
+  baseURL: 'https://mottu-java-qjpn.onrender.com/api', // URL da API no Render
   timeout: 5000,
 });
 

@@ -1,8 +1,9 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useRouter } from 'expo-router';
 import React, { useContext, useState } from 'react';
 import { StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
-import { ThemeContext } from '../../context/ThemeContext';
-import { UserContext } from '../../context/UserContext';
+import { ThemeContext } from '../../src/context/ThemeContext';
+import { UserContext } from '../../src/context/UserContext';
 
 // Tipos
 type ErrorKeys = 'email' | 'senha';
@@ -15,6 +16,7 @@ type FormErrors = {
 export default function LoginScreen() {
   const { setUser } = useContext(UserContext);
   const { theme } = useContext(ThemeContext);
+  const router = useRouter();
 
   const [email, setEmail] = useState('');
   const [senha, setSenha] = useState('');
@@ -42,6 +44,7 @@ export default function LoginScreen() {
         const usuario = JSON.parse(userData);
         if (email === usuario.email && senha === usuario.senha) {
           setUser(usuario);
+          router.push('../Home/home'); // ← Navega para a Home
         } else {
           setErroLogin('Email ou senha incorretos.');
         }

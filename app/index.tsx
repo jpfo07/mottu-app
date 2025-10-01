@@ -15,11 +15,11 @@ export default function Index() {
                 </Text>
             </View>
 
-            <TouchableOpacity style={styles.button} onPress={() => router.push('./login')}>
+            <TouchableOpacity style={styles.button} onPress={() => router.push('../app/Auth/login')}>
                 <Text style={styles.buttonText}>Login</Text>
             </TouchableOpacity>
 
-            <TouchableOpacity style={styles.button} onPress={() => router.push('./cadastro')}>
+            <TouchableOpacity style={styles.button} onPress={() => router.push('../app/Auth/cadastro')}>
                 <Text style={styles.buttonText}>Cadastro</Text>
             </TouchableOpacity>
         </View>

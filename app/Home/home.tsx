@@ -2,8 +2,8 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useRouter } from 'expo-router';
 import React, { useContext, useEffect, useState } from 'react';
 import { FlatList, Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
-import { ThemeContext } from '../../context/ThemeContext';
-import { UserContext } from '../../context/UserContext';
+import { ThemeContext } from '../../src/context/ThemeContext';
+import { UserContext } from '../../src/context/UserContext';
 
 export default function Home() {
   const router = useRouter();
@@ -28,21 +28,21 @@ export default function Home() {
     carregarFoto();
   }, [user]);
 
-  // Cards de Patios e Motos
+  // Cards de Pátios e Motos
   const cards = [
     {
       id: 'patios',
       titulo: 'Pátios',
       descricao: 'Gerencie os pátios',
       onCreate: () => router.push('/Patios/form'),
-      onList: () => router.push('/Patios/index'),
+      onList: () => router.push('/Patios'),
     },
     {
       id: 'motos',
       titulo: 'Motos',
       descricao: 'Gerencie as motos',
       onCreate: () => router.push('/Motos/form'),
-      onList: () => router.push('/Motos/index'),
+      onList: () => router.push('/Motos/motos'),
     },
   ];
 
@@ -60,7 +60,7 @@ export default function Home() {
       <View style={styles.subHeader}>
         <Text style={[styles.title, { color: theme.text }]}>Dashboard</Text>
         {fotoPerfil && (
-          <TouchableOpacity onPress={() => router.push('/perfil')}>
+          <TouchableOpacity onPress={() => router.push('/Perfil/perfil')}>
             <Image source={{ uri: fotoPerfil }} style={styles.fotoPerfil} />
           </TouchableOpacity>
         )}
@@ -69,16 +69,16 @@ export default function Home() {
       {/* Dropdown do menu */}
       {menuVisible && (
         <View style={styles.dropdown}>
-          <TouchableOpacity onPress={() => { setMenuVisible(false); router.push('/perfil'); }}>
+          <TouchableOpacity onPress={() => { setMenuVisible(false); router.push('/Perfil/perfil'); }}>
             <Text style={styles.dropdownItem}>Perfil</Text>
           </TouchableOpacity>
-          <TouchableOpacity onPress={() => { setMenuVisible(false); router.push('/alertas'); }}>
+          <TouchableOpacity onPress={() => { setMenuVisible(false); router.push('/Home/alertas'); }}>
             <Text style={styles.dropdownItem}>Alertas</Text>
           </TouchableOpacity>
-          <TouchableOpacity onPress={() => { setMenuVisible(false); router.push('/Patios/index'); }}>
+          <TouchableOpacity onPress={() => { setMenuVisible(false); router.push('/Patios'); }}>
             <Text style={styles.dropdownItem}>Controle do Pátio</Text>
           </TouchableOpacity>
-          <TouchableOpacity onPress={() => { setMenuVisible(false); router.push('/Motos/index'); }}>
+          <TouchableOpacity onPress={() => { setMenuVisible(false); router.push('/Motos/motos'); }}>
             <Text style={styles.dropdownItem}>Controle de Motos</Text>
           </TouchableOpacity>
         </View>

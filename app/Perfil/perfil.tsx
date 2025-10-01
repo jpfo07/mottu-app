@@ -3,17 +3,17 @@ import * as ImagePicker from 'expo-image-picker';
 import { useRouter } from 'expo-router';
 import React, { useContext, useEffect, useState } from 'react';
 import {
-    Image,
-    Modal,
-    ScrollView,
-    StyleSheet,
-    Text,
-    TextInput,
-    TouchableOpacity,
-    View,
+  Image,
+  Modal,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View,
 } from 'react-native';
-import { ThemeContext } from '../../context/ThemeContext';
-import { User, UserContext } from '../../context/UserContext';
+import { ThemeContext } from '../../src/context/ThemeContext';
+import { User, UserContext } from '../../src/context/UserContext';
 
 export default function Perfil() {
   const { theme } = useContext(ThemeContext);
@@ -25,6 +25,7 @@ export default function Perfil() {
   const [novoNome, setNovoNome] = useState('');
   const [novoEmail, setNovoEmail] = useState('');
 
+  // Carregar dados do usuário e foto
   useEffect(() => {
     const carregarDados = async () => {
       if (!user) return;
@@ -60,6 +61,7 @@ export default function Perfil() {
     }
   };
 
+  // Salvar alterações no perfil
   const salvarEdicao = async () => {
     if (!user) return;
 
@@ -85,7 +87,7 @@ export default function Perfil() {
   return (
     <View style={[styles.container, { backgroundColor: theme.background }]}>
       <View style={styles.header}>
-        <TouchableOpacity onPress={() => router.replace('../home')}>
+        <TouchableOpacity onPress={() => router.replace('/Home/home')}>
           <Text style={[styles.arrow, { color: theme.text }]}>←</Text>
         </TouchableOpacity>
         <Text style={[styles.title, { color: theme.text }]}>Perfil</Text>

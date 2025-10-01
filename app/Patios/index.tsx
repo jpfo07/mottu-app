@@ -1,9 +1,9 @@
 import { useRouter } from 'expo-router';
 import React, { useContext, useEffect, useState } from 'react';
 import { FlatList, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
-import { ThemeContext } from '../../context/ThemeContext';
-import { UserContext } from '../../context/UserContext';
-import { deletePatio, getPatios } from '../../services/patiosServices';
+import { ThemeContext } from '../../src/context/ThemeContext';
+import { UserContext } from '../../src/context/UserContext';
+import { deletePatio, getPatios } from '../../src/services/patiosServices';
 
 export default function PatiosList() {
   const { theme } = useContext(ThemeContext);
@@ -14,14 +14,18 @@ export default function PatiosList() {
   const [filtro, setFiltro] = useState('');
 
   const carregarPatios = async () => {
-    if (!user) return;
-    const data = await getPatios(user.id);
+  try {
+    const data = await getPatios(); // sem argumentos
     setPatios(data);
-  };
+  } catch (error: any) {
+    console.error('Erro ao carregar pátios:', error.response?.data || error.message);
+  }
+};
+
 
   useEffect(() => {
     carregarPatios();
-  }, [user]);
+  }, []);
 
   const patiosFiltrados = patios.filter((p: any) =>
     p.nome.toLowerCase().includes(filtro.toLowerCase())
@@ -35,13 +39,13 @@ export default function PatiosList() {
   const renderItem = ({ item }: { item: any }) => (
     <View style={[styles.itemContainer, { backgroundColor: theme.card }]}>
       <TouchableOpacity
-        onPress={() => router.push(`/Patios/detalhes?id=${item.id}`)}
+        onPress={() => router.push(`./Patios/detalhes-patio?id=${item.id}`)}
       >
         <Text style={{ color: theme.text, fontSize: 16 }}>{item.nome}</Text>
       </TouchableOpacity>
       <View style={styles.actions}>
         <TouchableOpacity
-          onPress={() => router.push(`/Patios/form?id=${item.id}`)}
+          onPress={() => router.push(`./Patios/form?id=${item.id}`)}
         >
           <Text style={{ color: theme.primary, marginRight: 12 }}>Editar</Text>
         </TouchableOpacity>

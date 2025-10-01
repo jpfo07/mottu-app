@@ -1,29 +1,32 @@
 import React, { useContext, useEffect, useState } from 'react';
 import { FlatList, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
-import { ThemeContext } from '../../context/ThemeContext';
-import { UserContext } from '../../context/UserContext';
-import { deleteMoto, getMotos } from '../../services/motosServices';
+import { ThemeContext } from '../../src/context/ThemeContext';
+import { deleteMoto, getMotos } from '../../src/services/motosServices';
 
 export default function MotosScreen() {
   const { theme } = useContext(ThemeContext);
-  const { user } = useContext(UserContext);
-
   const [motos, setMotos] = useState([]);
 
   const carregarMotos = async () => {
-    if (user) {
-      const data = await getMotos(user.id);
+    try {
+      const data = await getMotos(); // sem user.id
       setMotos(data);
+    } catch (error: any) {
+      console.error('Erro ao carregar motos:', error.response?.data || error.message);
     }
   };
 
   useEffect(() => {
     carregarMotos();
-  }, [user]);
+  }, []);
 
   const handleDelete = async (id: string) => {
-    await deleteMoto(id);
-    carregarMotos();
+    try {
+      await deleteMoto(id);
+      carregarMotos();
+    } catch (error: any) {
+      console.error('Erro ao deletar moto:', error.response?.data || error.message);
+    }
   };
 
   return (
@@ -35,7 +38,7 @@ export default function MotosScreen() {
         keyExtractor={(item: any) => item.id}
         renderItem={({ item }) => (
           <View style={[styles.card, { backgroundColor: theme.card }]}>
-            <Text style={{ color: theme.text }}>{item.modelo}</Text>
+            <Text style={{ color: theme.text }}>{item.numero}</Text>
             <TouchableOpacity onPress={() => handleDelete(item.id)}>
               <Text style={{ color: 'red' }}>Deletar</Text>
             </TouchableOpacity>
